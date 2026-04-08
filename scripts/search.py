@@ -15,7 +15,12 @@ from common import ROOT, chinese_numeral_to_int, cosine_similarity, embed_texts,
 def open_db(config: dict[str, Any], db_override: str) -> sqlite3.Connection:
     db_path = Path(db_override).expanduser().resolve() if db_override else (ROOT / config.get("database_path", "index/search.sqlite")).resolve()
     if not db_path.exists():
-        raise SystemExit(f"Search database not found: {db_path}")
+        print(f"索引文件不存在，正在自动创建...")
+        import subprocess
+        result = subprocess.run(["python", "scripts/build_index.py"], cwd=ROOT, capture_output=True, text=True)
+        if result.returncode != 0:
+            raise SystemExit(f"创建索引失败:\n{result.stderr}")
+        print("索引创建完成。")
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn

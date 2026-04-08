@@ -4,6 +4,12 @@
 
 项目地址：https://github.com/henryczq/mao-selected-works-skill.git
 
+## 项目说明
+录入《毛选》1-7卷（静火版）语料，建立本地知识库，支持关键词和AI知识库检索两种检索模式。
+默认只支持关键词检索。
+如果需要开启AI知识库检索，需要配置API key。内置了嵌入模型BAAI/bge-m3、重排模型BAAI/bge-reranker-v2-m3，和硅基流动url，大家如果使用硅基流动，只需要配置环境变量MAO_SKILL_API_KEY即可。
+
+
 ## 快速开始
 
 ```bash
