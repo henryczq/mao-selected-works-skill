@@ -1,0 +1,8 @@
+config/search.json
+corpus/imports/
+corpus/markdown/
+!corpus/markdown/.gitkeep
+index/
+!index/.gitkeep
+__pycache__/
+*.pyc
