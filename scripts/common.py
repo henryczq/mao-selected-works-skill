@@ -15,6 +15,24 @@ from typing import Any, Iterable
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_CONFIG_PATH = ROOT / "config" / "search.json"
 EXAMPLE_CONFIG_PATH = ROOT / "config" / "search.example.json"
+LOCAL_ENV_PATH = ROOT / ".env.local"
+
+
+def load_local_env(path: Path = LOCAL_ENV_PATH) -> None:
+    if not path.exists():
+        return
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+load_local_env()
 
 
 @dataclass
@@ -380,7 +398,8 @@ def rerank_documents(query: str, documents: list[str], config: dict[str, Any], t
     results = response.get("results") or response.get("data") or []
     normalized: list[dict[str, Any]] = []
     for item in results:
-        index = int(item.get("index", item.get("document", {}).get("index", -1)))
+        document_info = item.get("document") or {}
+        index = int(item.get("index", document_info.get("index", -1)))
         score = item.get("relevance_score", item.get("score", 0.0))
         if index >= 0:
             normalized.append({"index": index, "score": float(score)})
